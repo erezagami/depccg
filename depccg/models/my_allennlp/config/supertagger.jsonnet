@@ -24,7 +24,6 @@ local Glove = {
     token_embedders: {
       tokens: {
         type: 'embedding',
-        pretrained_file: 'https://s3-us-west-2.amazonaws.com/allennlp/datasets/glove/glove.6B.100d.txt.gz',
         embedding_dim: 100,
         sparse: true,
       },
@@ -184,12 +183,12 @@ local Encoder =
     directory_path: vocab,
   },
   dataset_reader: {
-    type: 'supertagging_dataset',
+    type: 'he_supertagging_dataset',
     lazy: true,
     token_indexers: TokenEmbedding.token_indexers,
   },
   validation_dataset_reader: {
-    type: 'supertagging_dataset',
+    type: 'he_supertagging_dataset',
     lazy: true,
     token_indexers: TokenEmbedding.token_indexers,
   },
@@ -245,6 +244,6 @@ local Encoder =
     grad_norm: 5,
     num_epochs: 100,
     patience: 20,
-    cuda_device: gpu,
+    cuda_device: -1,
   },
 }

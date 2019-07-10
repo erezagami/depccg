@@ -238,3 +238,20 @@ ja_default_binary_rules = [
     headfinal_combinator(ja_generalized_forward_composition1('/', '\\', '\\', '>Bx2')),
     headfinal_combinator(ja_generalized_forward_composition2('/', '\\', '\\', '>Bx3')),
 ]
+
+he_default_binary_rules = [
+    headfirst_combinator(en_forward_application()),
+    headfirst_combinator(en_backward_application()),
+    headfirst_combinator(forward_composition('/', '/', '/')),
+    headfirst_combinator(backward_composition('/', '\\', '/')),
+    headfirst_combinator(generalized_forward_composition('/', '/', '/')),
+    headfirst_combinator(generalized_backward_composition('/', '/', '/')),
+    headfirst_combinator(conjunction()),
+    headfirst_combinator(conjunction2()),
+    headfirst_combinator(remove_punctuation(False)),
+    headfirst_combinator(remove_punctuation(True)),
+    headfirst_combinator(remove_punctuation_left()),
+    headfirst_combinator(comma_and_verb_phrase_to_adverb()),
+    headfirst_combinator(parenthetical_direct_speech())
+
+]

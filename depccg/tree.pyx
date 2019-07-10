@@ -2,10 +2,10 @@ from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 from libcpp.pair cimport pair
 from libcpp.memory cimport shared_ptr, make_shared
-from .cat cimport Cat, Category
-from .combinator import unknown_combinator
+from depccg.cat cimport Cat, Category
+from depccg.combinator import unknown_combinator
 from lxml import etree
-from .tokens import Token
+from depccg.tokens import Token
 from depccg.utils import denormalize, normalize
 
 
@@ -34,6 +34,8 @@ class _AutoLineReader(object):
 
     def next(self):
         end = self.line.find(' ', self.index)
+        if end < 0:
+            raise RuntimeError(f'failed to parse: {self.line}')
         res = self.line[self.index:end]
         self.index = end + 1
         return res
@@ -75,6 +77,7 @@ class _AutoLineReader(object):
         elif word == '-RRB-':
             word = ')'
         dep = self.next()[:-2]
+        # print('L', cat, tag1, tag2, word, dep)
         return Tree.make_terminal(word, cat, self.word_id, self.lang)
 
     def parse_tree(self):
@@ -85,10 +88,13 @@ class _AutoLineReader(object):
         cat = Category.parse(self.next())
         left_is_head = self.next() == '0'
         self.next()
+        # print('T', cat, left_is_head)
         children = []
         while self.peek() != ')':
             children.append(self.next_node())
+
         self.next()
+
         if len(children) == 2:
             left, right = children
             return Tree.make_binary(
@@ -128,7 +134,7 @@ cdef class Tree:
 
     @staticmethod
     def of_auto(line, lang='en'):
-        return _AutoLineReader(line, lang).parse()
+        return _AutoLineReader(line+ ' ', lang).parse()
 
     @staticmethod
     def of_nltk_tree(tree, lang='en'):
@@ -366,4 +372,3 @@ cdef class Tree:
     def conll(self):
         cdef string res = CoNLL(self.node_).Get()
         return res.decode("utf-8")
-

@@ -16,7 +16,7 @@ from pathlib import Path
 from cython.parallel cimport prange
 from libc.stdio cimport fprintf, stderr
 from .combinator cimport combinator_list_to_vector
-from .combinator import en_default_binary_rules, ja_default_binary_rules
+from .combinator import en_default_binary_rules, ja_default_binary_rules, he_default_binary_rules
 from .utils cimport *
 from .utils import maybe_split_and_join, denormalize
 from .cat cimport Category
@@ -441,6 +441,51 @@ cdef class EnglishCCGParser:
         free(tags)
         free(deps)
         return res
+
+
+cdef class HebrewCCGParser(EnglishCCGParser):
+    def __init__(self,
+                 category_dict,
+                 unary_rules,
+                 seen_rules,
+                 binary_rules=None,
+                 unary_penalty=0.1,
+                 beta=0.00001,
+                 use_beta=True,
+                 use_category_dict=True,
+                 use_seen_rules=True,
+                 pruning_size=50,
+                 nbest=1,
+                 possible_root_cats=None,
+                 max_length=250,
+                 max_steps=100000,
+                 gpu=-1):
+        self.apply_unary_rules_ = EnApplyUnaryRules
+        self.make_apply_binary_rules_ = MakeEnApplyBinaryRules
+        self.binary_rules = binary_rules or en_default_binary_rules
+        if possible_root_cats is None:
+            possible_root_cats = ['S[dcl]', 'S[wq]', 'S[q]', 'S[qem]', 'NP']
+        self.possible_root_cats = [Category.parse(cat) if not isinstance(cat, Category) else cat
+                                   for cat in possible_root_cats]
+        self.category_dict = category_dict
+        self.unary_rules = unary_rules
+        self.seen_rules = seen_rules
+        self.unary_penalty = unary_penalty
+        self.beta = beta
+        self.use_beta = use_beta
+        self.use_category_dict = use_category_dict
+        self.use_seen_rules = use_seen_rules
+        self.pruning_size = pruning_size
+        self.nbest = nbest
+        self.max_length = max_length
+        self.max_steps = max_steps
+        self.tagger = None
+        self.gpu = gpu
+        self.lang = b'he'
+
+    @classmethod
+    def preprocess_seen_rules(cls, cat):
+        return cat
 
 
 cdef class JapaneseCCGParser(EnglishCCGParser):

@@ -7,9 +7,9 @@ import json
 import html
 from lxml import etree
 
-from .tree import Tree
-from .download import SEMANTIC_TEMPLATES
-from .semantics.ccg2lambda import parse as ccg2lambda
+from depccg.tree import Tree
+from depccg.download import SEMANTIC_TEMPLATES
+from depccg.semantics.ccg2lambda import parse as ccg2lambda
 
 
 logger = logging.getLogger(__name__)

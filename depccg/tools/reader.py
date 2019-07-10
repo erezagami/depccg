@@ -1,8 +1,8 @@
 
-from ..tree import Tree
-from ..cat import Category
-from ..combinator import unknown_combinator
-from ..tokens import Token
+from depccg.tree import Tree
+from depccg.cat import Category
+from depccg.combinator import unknown_combinator
+from depccg.tokens import Token
 from lxml import etree
 import logging
 
